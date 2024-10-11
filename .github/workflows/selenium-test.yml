@@ -40,7 +40,7 @@ jobs:
       uses: gradle/gradle-build-action@v2
     
     - name: Set permissions for gradlew
-      run: chmod +x gradlew  # Ensure gradlew is executable
-
+      run: chmod +x selenium-test-project/gradlew  # Ensure gradlew is executable
+      
     - name: Run Selenium tests
       run: ./selenium-test-project/gradlew clean test
