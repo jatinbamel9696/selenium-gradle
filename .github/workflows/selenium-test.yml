@@ -46,7 +46,7 @@ jobs:
       run: ls -R selenium-test-project  # Check the directory structure
       
     - name: Run Selenium tests
-      run: cd selenium-test-project && ./gradlew clean test
+      run: cd selenium-test-project && ./gradlew clean test--scan
 
     - name: Upload Test Reports
       uses: actions/upload-artifact@v4
