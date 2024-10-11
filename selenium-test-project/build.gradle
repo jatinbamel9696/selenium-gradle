@@ -19,7 +19,7 @@ ext {
 
 dependencies {
     // Application dependencies
-    implementation 'com.google.guava:guava:30.1-jre' // Ensure the correct version if needed
+    implementation 'com.google.guava:guava:30.1-jre' 
     implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-aop:$springBootVersion"
 
@@ -33,16 +33,14 @@ dependencies {
     implementation "io.cucumber:cucumber-spring:$cucumberVersion"
 
     // Test dependencies
-    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
-    testImplementation "io.cucumber:cucumber-junit-platform-engine:$cucumberVersion"
-    testImplementation "io.cucumber:cucumber-junit:$cucumberVersion"
-    testImplementation "org.testng:testng:7.10.2"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-    testImplementation "org.junit.platform:junit-platform-launcher:1.11.2"
-    testImplementation "org.junit.platform:junit-platform-suite:1.11.2"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+    testImplementation "io.cucumber:cucumber-junit:$cucumberVersion"
+    testImplementation "io.cucumber:cucumber-junit-platform-engine:$cucumberVersion"
+    testImplementation "org.testng:testng:7.10.2"
 }
 
 test {
-    useJUnitPlatform()  // Enables the JUnit Platform for the tests
+    useJUnitPlatform() // This enables the JUnit 5 platform
 }

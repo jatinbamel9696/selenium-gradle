@@ -1,9 +1,9 @@
-import org.junit.jupiter.api.Test;  // Use JUnit 5's Test
+import org.junit.jupiter.api.Test;  // Ensure this import is correct
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;  // Optional: For assertions
+import static org.junit.jupiter.api.Assertions.assertEquals;  // Correct assertion import
 
 public class Test {
     @Test  // JUnit 5 annotation
@@ -23,7 +23,7 @@ public class Test {
         // Print the title of the page
         System.out.println("Page title is: " + driver.getTitle());
 
-        // Optional: Validate the title
+        // Validate the title
         assertEquals("Google", driver.getTitle());  // Example assertion
 
         // Quit the driver
