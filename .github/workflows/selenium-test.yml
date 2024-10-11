@@ -47,4 +47,9 @@ jobs:
       
     - name: Run Selenium tests
       run: cd selenium-test-project && ./gradlew clean test
-    
+
+    - name: Upload Test Reports
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-reports
+        path: selenium-test-project/build/reports/tests/test/
