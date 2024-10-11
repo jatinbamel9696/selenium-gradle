@@ -15,36 +15,47 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '17'
-        distribution: 'adopt'  # or 'temurin' for OpenJDK
+        distribution: 'temurin'  # Using 'temurin' for OpenJDK
         cache: gradle
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
 
     - name: Install Chrome
       run: |
+        sudo apt-get update
+        sudo apt-get install -y wget gnupg2
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list
         sudo apt-get update
         sudo apt-get install -y google-chrome-stable
 
     - name: Install ChromeDriver
       run: |
         sudo apt-get install -y unzip
-        wget -N https://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
+        LATEST_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
+        wget -N https://chromedriver.storage.googleapis.com/$LATEST_VERSION/chromedriver_linux64.zip
         unzip chromedriver_linux64.zip
         sudo mv -f chromedriver /usr/local/bin/chromedriver
         sudo chmod +x /usr/local/bin/chromedriver
 
-    - name: Add Chrome and ChromeDriver to PATH
-      run: |
-        echo 'CHROME_BIN=/usr/bin/google-chrome' >> $GITHUB_ENV
-        echo 'CHROME_DRIVER=/usr/local/bin/chromedriver' >> $GITHUB_ENV
-
     - name: Set up Gradle
       uses: gradle/gradle-build-action@v2
-    
+
     - name: Set permissions for gradlew
       run: chmod +x selenium-test-project/gradlew  # Ensure gradlew is executable
-    
+
     - name: List directory structure
       run: ls -R selenium-test-project  # Check the directory structure
-      
+
+    - name: Build with Gradle
+      run: ./gradlew build
+
     - name: Run Selenium tests
       run: cd selenium-test-project && ./gradlew clean test --scan
 
