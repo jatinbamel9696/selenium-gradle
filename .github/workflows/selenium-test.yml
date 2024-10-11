@@ -1,7 +1,7 @@
 name: Selenium Test Workflow
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
   run-selenium-tests:
@@ -26,36 +26,41 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+
     - name: Get Chrome Version
       id: chrome-version
       run: |
-         CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
-         echo "Chrome version: $CHROME_VERSION"
-         echo "CHROME_VERSION=$CHROME_VERSION" >> $GITHUB_ENV   
-         
+        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+        echo "Chrome version: $CHROME_VERSION"
+        echo "CHROME_VERSION=$CHROME_VERSION" >> $GITHUB_ENV   
+
     - name: Install ChromeDriver
       run: |
         sudo apt-get install -y unzip
-        # Fetch the latest ChromeDriver version matching the Chrome version
         CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_${{ env.CHROME_VERSION%.* }})
         wget https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip
         unzip chromedriver_linux64.zip
         sudo mv chromedriver /usr/local/bin/chromedriver
         sudo chmod +x /usr/local/bin/chromedriver
+
     - name: Set permissions for gradlew
-      run: chmod +x selenium-test-project/gradlew  # Ensure gradlew is executable
+      run: chmod +x ./gradlew  # Ensure gradlew is executable
 
     - name: List directory structure
-      run: ls -R selenium-test-project  # Check the directory structure
+      run: ls -R  # Check the directory structure to ensure paths are correct
 
     - name: Build with Gradle
-      run: cd selenium-test-project && ./gradlew build  # Change to the correct directory
+      run: ./gradlew build  # Run the Gradle build
 
     - name: Run Selenium tests
-      run: cd selenium-test-project && ./gradlew clean test --scan  # Change to the correct directory
+      run: ./gradlew clean test --scan  # Run the Selenium tests and generate a build scan
 
     - name: Upload Test Reports
       uses: actions/upload-artifact@v4
       with:
         name: test-reports
-        path: selenium-test-project/app/build/reports/tests/test/
+        path: build/reports/tests/test/  # Path to test reports (adjust if necessary)
