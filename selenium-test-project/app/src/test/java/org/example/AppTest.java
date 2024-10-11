@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,11 +12,12 @@ class AppTest {
 
     @Test
     void testGoogleHomePageTitle() {
-        // Set up ChromeDriver with options
+        // Set up ChromeDriver using WebDriverManager
+        WebDriverManager.chromedriver().setup();
+
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless=new");  // Running Chrome in headless mode
 
-        // Set the WebDriver instance with ChromeDriver
         WebDriver driver = new ChromeDriver(options);
 
         try {
