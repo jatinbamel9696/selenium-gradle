@@ -38,6 +38,9 @@ jobs:
 
     - name: Set up Gradle
       uses: gradle/gradle-build-action@v2
+    
+    - name: Set permissions for gradlew
+      run: chmod +x gradlew  # Ensure gradlew is executable
 
     - name: Run Selenium tests
       run: ./gradlew clean test
