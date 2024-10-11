@@ -35,13 +35,14 @@ jobs:
       id: chrome-version
       run: |
         CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+        CHROME_VERSION_SHORT=$(echo $CHROME_VERSION | cut -d'.' -f1-3)  # Extracting major.minor.patch version
         echo "Chrome version: $CHROME_VERSION"
-        echo "CHROME_VERSION=$CHROME_VERSION" >> $GITHUB_ENV   
+        echo "CHROME_VERSION=$CHROME_VERSION_SHORT" >> $GITHUB_ENV   
 
     - name: Install ChromeDriver
       run: |
         sudo apt-get install -y unzip
-        CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_${{ env.CHROME_VERSION%.* }})
+        CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_${{ env.CHROME_VERSION }})
         wget https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip
         unzip chromedriver_linux64.zip
         sudo mv chromedriver /usr/local/bin/chromedriver
@@ -54,10 +55,10 @@ jobs:
       run: ls -R  # Check the directory structure to ensure paths are correct
 
     - name: Build with Gradle
-      run: ./gradlew build  # Run the Gradle build
+      run: cd selenium-test-project && ./gradlew build  # Run the Gradle build
 
     - name: Run Selenium tests
-      run: ./gradlew clean test --scan  # Run the Selenium tests and generate a build scan
+      run: cd selenium-test-project && ./gradlew clean test --scan
 
     - name: Upload Test Reports
       uses: actions/upload-artifact@v4
