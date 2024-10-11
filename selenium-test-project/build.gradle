@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+}
+
+group 'com.yourpackage'  // Replace with your package name
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    cucumberVersion = '7.20.0'
+    seleniumVersion = '4.25.0'
+    junitVersion = '5.11.2'
+    springBootVersion = '3.3.4'
+    lombokVersion = '1.18.34'
+}
+
+dependencies {
+    // This dependency is used by the application.
+    implementation 'com.google.guava:guava:30.1-jre' // Add the correct version if needed
+    implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-aop:$springBootVersion"
+    
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    implementation "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
+
+    implementation "io.cucumber:cucumber-java:$cucumberVersion"
+    implementation "io.cucumber:cucumber-spring:$cucumberVersion"
+    testImplementation "io.cucumber:cucumber-junit:$cucumberVersion"
+    testImplementation "io.cucumber:cucumber-testng:$cucumberVersion"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+    testImplementation "io.cucumber:cucumber-junit-platform-engine:$cucumberVersion"
+    testImplementation "org.testng:testng:7.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testImplementation "org.junit.platform:junit-platform-launcher:1.11.2"
+    testImplementation "org.junit.platform:junit-platform-suite:1.11.2"
+}
+
+test {
+    useJUnitPlatform()
+}
