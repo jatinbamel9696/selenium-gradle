@@ -18,22 +18,24 @@ ext {
 }
 
 dependencies {
-    // This dependency is used by the application.
-    implementation 'com.google.guava:guava:30.1-jre' // Add the correct version if needed
+    // Application dependencies
+    implementation 'com.google.guava:guava:30.1-jre' // Ensure the correct version if needed
     implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-aop:$springBootVersion"
-    
+
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
     implementation "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
 
+    // Cucumber dependencies
     implementation "io.cucumber:cucumber-java:$cucumberVersion"
     implementation "io.cucumber:cucumber-spring:$cucumberVersion"
-    testImplementation "io.cucumber:cucumber-junit:$cucumberVersion"
-    testImplementation "io.cucumber:cucumber-testng:$cucumberVersion"
+
+    // Test dependencies
     testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
     testImplementation "io.cucumber:cucumber-junit-platform-engine:$cucumberVersion"
+    testImplementation "io.cucumber:cucumber-junit:$cucumberVersion"
     testImplementation "org.testng:testng:7.10.2"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
@@ -42,5 +44,5 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform()  // Enables the JUnit Platform for the tests
 }
