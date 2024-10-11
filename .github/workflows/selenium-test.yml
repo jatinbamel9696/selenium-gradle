@@ -43,4 +43,4 @@ jobs:
       run: chmod +x gradlew  # Ensure gradlew is executable
 
     - name: Run Selenium tests
-      run: ./gradlew clean test
+      run: ./selenium-test-project/gradlew clean test
