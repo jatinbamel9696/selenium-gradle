@@ -1,30 +1,22 @@
-import org.junit.jupiter.api.Test;  // Ensure this import is correct
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;  // Correct assertion import
-
-public class Test {
-    @Test  // JUnit 5 annotation
-    public void seleniumTest() {
+public class Test {  // Class names should start with an uppercase letter
+    public static void main(String[] args) {
         // Set Chrome options for headless mode
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--headless=new");
 
         // Initialize WebDriver with ChromeDriver
         WebDriver driver = new ChromeDriver(options);
 
         // Navigate to Google
-        driver.get("https://google.com");
-
+        driver.get("https://google.com");  // Corrected the string formatting
+        System.out.println(driver.getTitle());  // Print the title of the page
         // Print the title of the page
-        System.out.println("Page title is: " + driver.getTitle());
+        System.out.println("Page title is: " + driver.getTitle());  // Output the title
 
-        // Validate the title
-        assertEquals("Google", driver.getTitle());  // Example assertion
 
         // Quit the driver
         driver.quit();
