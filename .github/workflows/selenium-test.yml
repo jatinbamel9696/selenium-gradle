@@ -44,9 +44,6 @@ jobs:
         sudo mv -f chromedriver /usr/local/bin/chromedriver
         sudo chmod +x /usr/local/bin/chromedriver
 
-    - name: Set up Gradle
-      uses: gradle/gradle-build-action@v2
-
     - name: Set permissions for gradlew
       run: chmod +x selenium-test-project/gradlew  # Ensure gradlew is executable
 
@@ -54,13 +51,13 @@ jobs:
       run: ls -R selenium-test-project  # Check the directory structure
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: cd selenium-test-project && ./gradlew build  # Change to the correct directory
 
     - name: Run Selenium tests
-      run: cd selenium-test-project && ./gradlew clean test --scan
+      run: cd selenium-test-project && ./gradlew clean test --scan  # Change to the correct directory
 
     - name: Upload Test Reports
       uses: actions/upload-artifact@v4
       with:
         name: test-reports
-        path: selenium-test-project/build/reports/tests/test/
+        path: selenium-test-project/app/build/reports/tests/test/
