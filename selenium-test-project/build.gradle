@@ -32,9 +32,11 @@ dependencies {
     implementation "io.cucumber:cucumber-java:$cucumberVersion"
     implementation "io.cucumber:cucumber-spring:$cucumberVersion"
 
-    // Test dependencies
+    // JUnit 5 dependencies
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    
+    // Spring Boot test dependencies
     testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
     testImplementation "io.cucumber:cucumber-junit:$cucumberVersion"
     testImplementation "io.cucumber:cucumber-junit-platform-engine:$cucumberVersion"
