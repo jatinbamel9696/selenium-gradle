@@ -15,6 +15,8 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '17'
+        distribution: 'adopt'  # or 'temurin' for OpenJDK
+        cache: gradle
 
     - name: Install Chrome
       run: |
