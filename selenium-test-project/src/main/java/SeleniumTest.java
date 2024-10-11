@@ -2,7 +2,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-public class Test {  // Class names should start with an uppercase letter
+public class SeleniumTest {  // Class names should start with an uppercase letter
     public static void main(String[] args) {
         // Set Chrome options for headless mode
         ChromeOptions options = new ChromeOptions();
