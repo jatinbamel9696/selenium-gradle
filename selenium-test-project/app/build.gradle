@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'io.github.bonigarcia.webdrivermanager' version '5.4.2' // Plugin for automatic WebDriver setup
 }
 
 group 'com.yourpackage'  // Replace with your package name
@@ -49,4 +50,11 @@ test {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+// Task to automatically set up WebDriver (ChromeDriver)
+task setupWebDriver {
+    doLast {
+        io.github.bonigarcia.wdm.WebDriverManager.chromedriver().setup()
+    }
 }
