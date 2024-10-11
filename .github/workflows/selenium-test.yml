@@ -41,6 +41,10 @@ jobs:
     
     - name: Set permissions for gradlew
       run: chmod +x selenium-test-project/gradlew  # Ensure gradlew is executable
+    
+    - name: List directory structure
+      run: ls -R selenium-test-project  # Check the directory structure
       
     - name: Run Selenium tests
-      run: ./selenium-test-project/gradlew clean test
+      run: cd selenium-test-project && ./gradlew clean test
+    
