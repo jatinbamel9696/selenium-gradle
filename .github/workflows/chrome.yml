@@ -29,11 +29,11 @@ jobs:
     - name: Install Google Chrome
       uses: browser-actions/setup-chrome@v1
       with:
-        chrome-version: 120  # Specify the version you need
+        chrome-version: latest  # Specify the version you need
         install-chromedriver: true
 
     - name: Set permissions for gradlew
-      run: chmod +x ./gradlew  # Ensure gradlew is executable
+      run: chmod +x selenium-test-project/gradlew # Ensure gradlew is executable
 
     - name: Build with Gradle
       run: cd selenium-test-project && ./gradlew build  # Run the Gradle build
