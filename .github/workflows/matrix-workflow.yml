@@ -1,37 +1,35 @@
-name:  Matrix Test Workflow
+name: New Selenium Test Workflow
 
 on:
   workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
   run-selenium-tests:
-    runs-on: ${{ matrix.os }}  # Use the OS from the matrix
-    timeout-minutes: 15
-
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]  # Different OS environments
-        chrome-version: [latest, 129]  # Include "latest" as a Chrome version
-        java-version: [17]  # Different Java versions
-        selenium-version: [4.26.0]  # Specify different Selenium versions
-        browser: [chrome]  # Different browser types
-        headless: [true]  # Default to headless for all Linux environments
+        os: [ubuntu-latest, windows-latest]
+        chrome-version: [latest, 129]
+        java-version: [17]
+        selenium-version: [4.26.0]
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up JDK
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ matrix.java-version }}  # Use Java version from the matrix
-        distribution: 'temurin'  # Using 'temurin' for OpenJDK
+        java-version: ${{ matrix.java-version }}
+        distribution: 'temurin'
         cache: gradle
 
     - name: Cache Gradle packages
       uses: actions/cache@v4
       with:
-        path: ~/.gradle/caches
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
@@ -39,48 +37,42 @@ jobs:
     - name: Install Google Chrome
       uses: browser-actions/setup-chrome@v1
       with:
-        chrome-version: ${{ matrix.chrome-version }}  # Chrome version from the matrix
-        install-chromedriver: true  # Automatically install the correct version of ChromeDriver
+        chrome-version: ${{ matrix.chrome-version }}
+        install-chromedriver: true
 
     - name: Set permissions for gradlew
-      run: chmod +x selenium-test-project/gradlew  # Ensure gradlew is executable
-
-    # - name: Build with Gradle (Linux)
-    #   if: matrix.os == 'ubuntu-latest'  # Only run on Linux
-    #   run: |
-    #     cd selenium-test-project
-    #     ./gradlew build  # Run the Gradle build
-
-    # - name: Build with Gradle (Windows)
-    #   if: matrix.os == 'windows-latest'  # Only run on Windows
-    #   run: |
-    #     cd selenium-test-project
-    #     gradlew build  # Use cmd syntax
-    #   shell: cmd
+      run: chmod +x selenium-test-project/gradlew
 
     - name: Set Selenium version
-      run: echo "SELENIUM_VERSION=${{ matrix.selenium-version }}" >> $GITHUB_ENV  # Set the Selenium version variable
+      run: echo "SELENIUM_VERSION=${{ matrix.selenium-version }}" >> $GITHUB_ENV
 
-    - name: Run Selenium tests
-      shell: bash
-      run: | 
-        cd selenium-test-project  # Change to the Selenium project directory
-        echo "Current OS: ${{ matrix.os }}"
-        # Determine the headless mode and run the tests
-        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          echo "Running tests in headless mode on Linux..."
-          ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }} --warning-mode all
-        else
-          echo "Running tests in normal mode on Windows..."
-          cmd /c "gradlew.bat clean test -Dheadless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }} --warning-mode all"
-        fi
+    - name: Run Selenium tests (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        cd selenium-test-project
+        echo "Running tests in headless mode on Linux..."
+        ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }} --stacktrace --info
 
+    - name: Run Selenium tests (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: cmd
+      run: |
+        cd selenium-test-project
+        echo "Running tests in normal mode on Windows..."
+        gradlew.bat clean test -Dheadless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }} --stacktrace --info
+
+    - name: Run Selenium tests (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        cd selenium-test-project
+        echo "Running tests on macOS..."
+        ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }} --stacktrace --info
 
     - name: Upload Test Reports
       uses: actions/upload-artifact@v4
       with:
-        name: test-reports-${{ github.run_id }}-${{ matrix.chrome-version }}-${{ matrix.java-version }}-${{ matrix.headless }}-${{ matrix.environment }}  # Unique report name for each run
-        path: build/reports/tests/test/  # Adjust the path if necessary
+        name: test-reports-${{ github.run_id }}-${{ matrix.chrome-version }}-${{ matrix.java-version }}-${{ matrix.headless }}-${{ matrix.environment }}
+        path: build/custom-junit-reports
         if-no-files-found: warn
         compression-level: 6
         overwrite: true
