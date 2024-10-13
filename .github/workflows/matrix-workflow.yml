@@ -44,14 +44,25 @@ jobs:
     - name: Set permissions for gradlew
       run: chmod +x selenium-test-project/gradlew  # Ensure gradlew is executable
 
-    - name: Build with Gradle
-      run: cd selenium-test-project && ./gradlew build  # Run the Gradle build
+    - name: Build with Gradle (Linux)
+      if: matrix.os == 'ubuntu-latest'  # Only run on Linux
+      run: |
+        cd selenium-test-project
+        ./gradlew build  # Run the Gradle build
+
+    - name: Build with Gradle (Windows)
+      if: matrix.os == 'windows-latest'  # Only run on Windows
+      run: |
+        cd selenium-test-project
+        gradlew build  # Use cmd syntax
+      shell: cmd
 
     - name: Set Selenium version
       run: echo "SELENIUM_VERSION=${{ matrix.selenium-version }}" >> $GITHUB_ENV  # Set the Selenium version variable
 
     - name: Run Selenium tests
       run: |
+        cd selenium-test-project  # Change to the Selenium project directory
         # Set headless mode to true for Linux
         if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
           ./gradlew clean test --headless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }}
