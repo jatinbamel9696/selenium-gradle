@@ -6,6 +6,7 @@ on:
 jobs:
   run-selenium-tests:
     runs-on: ${{ matrix.os }}  # Use the OS from the matrix
+    timeout-minutes: 15
 
     strategy:
       matrix:
@@ -44,18 +45,18 @@ jobs:
     - name: Set permissions for gradlew
       run: chmod +x selenium-test-project/gradlew  # Ensure gradlew is executable
 
-    - name: Build with Gradle (Linux)
-      if: matrix.os == 'ubuntu-latest'  # Only run on Linux
-      run: |
-        cd selenium-test-project
-        ./gradlew build  # Run the Gradle build
+    # - name: Build with Gradle (Linux)
+    #   if: matrix.os == 'ubuntu-latest'  # Only run on Linux
+    #   run: |
+    #     cd selenium-test-project
+    #     ./gradlew build  # Run the Gradle build
 
-    - name: Build with Gradle (Windows)
-      if: matrix.os == 'windows-latest'  # Only run on Windows
-      run: |
-        cd selenium-test-project
-        gradlew build  # Use cmd syntax
-      shell: cmd
+    # - name: Build with Gradle (Windows)
+    #   if: matrix.os == 'windows-latest'  # Only run on Windows
+    #   run: |
+    #     cd selenium-test-project
+    #     gradlew build  # Use cmd syntax
+    #   shell: cmd
 
     - name: Set Selenium version
       run: echo "SELENIUM_VERSION=${{ matrix.selenium-version }}" >> $GITHUB_ENV  # Set the Selenium version variable
@@ -63,11 +64,15 @@ jobs:
     - name: Run Selenium tests
       run: |
         cd selenium-test-project  # Change to the Selenium project directory
-        # Set headless mode to true for Linux
-        if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+        echo "Current OS: ${{ matrix.os }}"
+    
+        # Determine the headless mode and run the tests
+        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+          echo "Running tests in headless mode on Linux..."
           ./gradlew clean test --headless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }}
-        else
-          ./gradlew clean test --headless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }}  # Change this based on your needs
+        elif [ "${{ matrix.os }}" == "windows-latest" ]; then
+          echo "Running tests in normal mode on Windows..."
+          gradlew clean test --headless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }}  # Use cmd syntax
         fi
 
     - name: Upload Test Reports
