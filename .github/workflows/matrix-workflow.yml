@@ -65,15 +65,15 @@ jobs:
       run: |
         cd selenium-test-project  # Change to the Selenium project directory
         echo "Current OS: ${{ matrix.os }}"
-    
         # Determine the headless mode and run the tests
-        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+        if ($env:RUNNER_OS -eq 'Linux') {
           echo "Running tests in headless mode on Linux..."
-          ./gradlew clean test --Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }} --warning-mode all
-        else
+          ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }} --scan
+        } else {
           echo "Running tests in normal mode on Windows..."
-          cmd /C "./gradlew clean test -Dheadless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }} --warning-mode all"
-        fi
+          ./gradlew clean test -Dheadless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }} --warning-mode all
+        }
+
 
     - name: Upload Test Reports
       uses: actions/upload-artifact@v4
