@@ -62,17 +62,18 @@ jobs:
       run: echo "SELENIUM_VERSION=${{ matrix.selenium-version }}" >> $GITHUB_ENV  # Set the Selenium version variable
 
     - name: Run Selenium tests
-      run: |
+      shell: bash
+      run: | 
         cd selenium-test-project  # Change to the Selenium project directory
         echo "Current OS: ${{ matrix.os }}"
         # Determine the headless mode and run the tests
-        if ($env:RUNNER_OS -eq 'Linux') {
+        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
           echo "Running tests in headless mode on Linux..."
-          ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }} --scan
-        } else {
+          ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }} --warning-mode all
+        else
           echo "Running tests in normal mode on Windows..."
-          ./gradlew clean test -Dheadless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }} --warning-mode all
-        }
+          cmd /c "gradlew.bat clean test -Dheadless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }} --warning-mode all"
+        fi
 
 
     - name: Upload Test Reports
