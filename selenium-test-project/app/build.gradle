@@ -7,7 +7,7 @@ version '1.0-SNAPSHOT'
 
 ext {
     cucumberVersion = '7.20.0'
-    seleniumVersion = '4.25.0'
+    seleniumVersion = project.hasProperty('seleniumVersion') ? project.seleniumVersion : '4.25.0'
     junitVersion = '5.11.2'
     springBootVersion = '3.3.4'
     lombokVersion = '1.18.34'
