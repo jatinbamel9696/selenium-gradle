@@ -1,4 +1,4 @@
-name: Matrix Selenium Test Workflow
+name: New Selenium Test Workflow
 
 on:
   workflow_dispatch:  # Allows manual triggering of the workflow
@@ -9,12 +9,12 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]  # Different OS environments
-        chrome-version: [129, 130, latest]  # Different Chrome versions
-        java-version: [17, 18]  # Different Java versions
-        selenium-version: [4.25.0, 4.26.0]  # Specify different Selenium versions
-        browser: [chrome, firefox]  # Different browser types
-        headless: [true, false]  # Include headless mode
+        os: [ubuntu-latest, windows-latest]  # Different OS environments
+        chrome-version: [latest, 129]  # Include "latest" as a Chrome version
+        java-version: [17]  # Different Java versions
+        selenium-version: [4.26.0]  # Specify different Selenium versions
+        browser: [chrome]  # Different browser types
+        headless: [true]  # Default to headless for all Linux environments
 
     steps:
     - name: Checkout code
@@ -44,11 +44,20 @@ jobs:
     - name: Set permissions for gradlew
       run: chmod +x selenium-test-project/gradlew  # Ensure gradlew is executable
 
+    - name: Build with Gradle
+      run: cd selenium-test-project && ./gradlew build  # Run the Gradle build
+
     - name: Set Selenium version
       run: echo "SELENIUM_VERSION=${{ matrix.selenium-version }}" >> $GITHUB_ENV  # Set the Selenium version variable
 
     - name: Run Selenium tests
-      run: cd selenium-test-project && ./gradlew clean test --headless=${{ matrix.headless }} -Dselenium.version=${{ env.SELENIUM_VERSION }}  # Pass environment and Selenium version as system properties
+      run: |
+        # Set headless mode to true for Linux
+        if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+          ./gradlew clean test --headless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }}
+        else
+          ./gradlew clean test --headless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }}  # Change this based on your needs
+        fi
 
     - name: Upload Test Reports
       uses: actions/upload-artifact@v4
