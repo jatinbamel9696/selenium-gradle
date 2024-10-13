@@ -48,10 +48,17 @@ test {
         events "PASSED", "FAILED", "SKIPPED"
         showStandardStreams = true
     }
-     // Ensure test reports are generated
+
+    // Ensure test reports are generated
     reports {
-        junitXml.enabled = true
-        html.enabled = true
+        junitXml {
+            // Optional: Specify output location if needed
+            destination = file("${buildDir}/custom-junit-reports")
+        }
+        html {
+            // Optional: Specify output location if needed
+            destination = file("${buildDir}/custom-html-reports")
+        }
     }
 }
 
