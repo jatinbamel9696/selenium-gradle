@@ -11,7 +11,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         browser: [chrome]
         chrome-version: [latest, 129]
-        firefox-version: []
+       # firefox-version: []
         java-version: [17]
         selenium-version: [4.25.0]
 
