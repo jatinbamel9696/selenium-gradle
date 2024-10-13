@@ -48,6 +48,11 @@ test {
         events "PASSED", "FAILED", "SKIPPED"
         showStandardStreams = true
     }
+     // Ensure test reports are generated
+    reports {
+        junitXml.enabled = true
+        html.enabled = true
+    }
 }
 
 sourceSets {
