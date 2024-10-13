@@ -29,7 +29,8 @@ jobs:
     - name: Install Google Chrome
       uses: browser-actions/setup-chrome@v1
       with:
-        chrome-version: latest  # Specify the version you need
+        chrome-version: 129  # Specify the version you need
+        chromedriver-version: 129.0.6668.100
         install-chromedriver: true
 
     - name: Set permissions for gradlew
