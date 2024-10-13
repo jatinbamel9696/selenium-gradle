@@ -1,4 +1,4 @@
-name: New Selenium Test Workflow
+name: matrix Selenium Test Workflow
 
 on:
   workflow_dispatch:  # Allows manual triggering of the workflow
@@ -7,11 +7,11 @@ jobs:
   run-selenium-tests:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false  # Fail all jobs as soon as one fails
       matrix:
         os: [ubuntu-latest, windows-latest]
         browser: [chrome]
         chrome-version: [latest, 129]
-       # firefox-version: []
         java-version: [17]
         selenium-version: [4.25.0]
 
@@ -61,7 +61,6 @@ jobs:
         cd selenium-test-project
         echo "Running tests in headless mode on Linux..."
         ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }}
-      continue-on-error: true
 
     - name: Run Selenium tests (Windows)
       if: matrix.os == 'windows-latest'
@@ -70,7 +69,7 @@ jobs:
         cd selenium-test-project
         echo "Running tests in normal mode on Windows..."
         gradlew.bat clean test -Dheadless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }}
-      continue-on-error: true
+
 
     - name: Run Selenium tests (macOS)
       if: matrix.os == 'macos-latest'
