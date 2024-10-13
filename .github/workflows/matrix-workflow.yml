@@ -9,9 +9,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
+        browser: [chrome]
         chrome-version: [latest, 129]
+        firefox-version: []
         java-version: [17]
-        selenium-version: [4.26.0]
+        selenium-version: [4.25.0]
 
     steps:
     - name: Checkout code
@@ -35,10 +37,17 @@ jobs:
           ${{ runner.os }}-gradle-
 
     - name: Install Google Chrome
+      if: matrix.browser == 'chrome'
       uses: browser-actions/setup-chrome@v1
       with:
         chrome-version: ${{ matrix.chrome-version }}
         install-chromedriver: true
+      
+    - name: Install Firefox
+      if: matrix.browser == 'firefox'
+      uses: browser-actions/setup-firefox@v1
+      with:
+        firefox-version: ${{ matrix.firefox-version }}
 
     - name: Set permissions for gradlew
       run: chmod +x selenium-test-project/gradlew
@@ -48,33 +57,33 @@ jobs:
 
     - name: Run Selenium tests (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
-      continue-on-error:  true
       run: |
         cd selenium-test-project
         echo "Running tests in headless mode on Linux..."
-        ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }} --stacktrace --info
+        ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }}
+      continue-on-error: true
 
     - name: Run Selenium tests (Windows)
       if: matrix.os == 'windows-latest'
-      continue-on-error: true
       shell: cmd
       run: |
         cd selenium-test-project
         echo "Running tests in normal mode on Windows..."
-        gradlew.bat clean test -Dheadless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }} --stacktrace --info
+        gradlew.bat clean test -Dheadless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }}
+      continue-on-error: true
 
     - name: Run Selenium tests (macOS)
       if: matrix.os == 'macos-latest'
       run: |
         cd selenium-test-project
         echo "Running tests on macOS..."
-        ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }} --stacktrace --info
+        ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }}
 
     - name: Upload Test Reports
       uses: actions/upload-artifact@v4
       with:
-        name: test-reports-${{ github.run_id }}-${{ matrix.chrome-version }}-${{ matrix.java-version }}-${{ matrix.headless }}-${{ matrix.environment }}
-        path: build/custom-junit-reports
+        name: test-reports-${{ github.run_id }}-${{ matrix.browser }}-${{ matrix.java-version }}-${{ matrix.headless }}
+        path: build/test-results/reports
         if-no-files-found: warn
         compression-level: 6
         overwrite: true

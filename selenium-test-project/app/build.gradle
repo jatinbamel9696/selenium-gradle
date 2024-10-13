@@ -43,24 +43,21 @@ dependencies {
 
 test {
     useJUnitPlatform()
-
     testLogging {
         events "PASSED", "FAILED", "SKIPPED"
         showStandardStreams = true
     }
-
-    // Ensure test reports are generated
+    // Ensure test reports are generated in a unified directory
     reports {
         junitXml {
-            // Optional: Specify output location if needed
-            destination = file("${buildDir}/custom-junit-reports")
+            destination = file("${buildDir}/test-results/reports")
         }
         html {
-            // Optional: Specify output location if needed
-            destination = file("${buildDir}/custom-html-reports")
+            destination = file("${buildDir}/test-results/reports")
         }
     }
 }
+
 
 sourceSets {
     test {
