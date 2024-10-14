@@ -19,6 +19,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: project 
+
+    
+
     - name: Set up JDK
       uses: actions/setup-java@v4
       with:
@@ -50,7 +57,7 @@ jobs:
         firefox-version: ${{ matrix.firefox-version }}
 
     - name: Set permissions for gradlew
-      run: chmod +x selenium-test-project/gradlew
+      run: chmod +x selenium-project/gradlew
 
     - name: Set Selenium version
       run: echo "SELENIUM_VERSION=${{ matrix.selenium-version }}" >> $GITHUB_ENV
@@ -58,7 +65,7 @@ jobs:
     - name: Run Selenium tests (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        cd selenium-test-project
+        cd selenium-project
         echo "Running tests in headless mode on Linux..."
         ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }}
 
@@ -66,7 +73,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: cmd
       run: |
-        cd selenium-test-project
+        cd selenium-project
         echo "Running tests in normal mode on Windows..."
         gradlew.bat clean test -Dheadless=false -DseleniumVersion=${{ env.SELENIUM_VERSION }}
 
@@ -74,7 +81,7 @@ jobs:
     - name: Run Selenium tests (macOS)
       if: matrix.os == 'macos-latest'
       run: |
-        cd selenium-test-project
+        cd selenium-project
         echo "Running tests on macOS..."
         ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }}
 
