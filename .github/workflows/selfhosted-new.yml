@@ -1,0 +1,67 @@
+name: self-hosted-selenium
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-selenium-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [self-hosted]
+        browser: [chrome]
+        chrome-version: [129]
+        java-version: [17]
+        selenium-version: [4.25.0]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ matrix.java-version }}
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Install Google Chrome
+      if: matrix.browser == 'chrome'
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: ${{ matrix.chrome-version }}
+        install-chromedriver: true
+
+    - name: Set permissions for gradlew
+      run: chmod +x selenium-project/gradlew
+
+    - name: Set Selenium version
+      run: echo "SELENIUM_VERSION=${{ matrix.selenium-version }}" >> $GITHUB_ENV
+
+    - name: Run Selenium tests
+      if: matrix.os == 'self-hosted'  # Adjust as needed based on your runner OS
+      run: |
+        cd selenium-project
+        echo "Running tests in headless mode on Linux..."
+        ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }}
+
+    - name: Upload Test Reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-reports-${{ github.run_id }}-${{ matrix.browser }}-${{ matrix.java-version }}
+        path: build/test-results/reports
+        if-no-files-found: warn
+        compression-level: 6
+        overwrite: true
+        include-hidden-files: true
