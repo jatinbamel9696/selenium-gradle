@@ -44,7 +44,7 @@ jobs:
         install-chromedriver: true
 
     - name: Set permissions for gradlew
-      run: chmod +x selenium-project/gradlew
+      run: chmod +x selenium-test-project/gradlew
 
     - name: Set Selenium version
       run: echo "SELENIUM_VERSION=${{ matrix.selenium-version }}" >> $GITHUB_ENV
@@ -52,7 +52,7 @@ jobs:
     - name: Run Selenium tests
       if: matrix.os == 'self-hosted'  # Adjust as needed based on your runner OS
       run: |
-        cd selenium-project
+        cd selenium-test-project
         echo "Running tests in headless mode on Linux..."
         ./gradlew clean test -Dheadless=true -DseleniumVersion=${{ env.SELENIUM_VERSION }}
 
